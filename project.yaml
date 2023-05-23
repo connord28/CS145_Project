@@ -1,0 +1,9 @@
+# WORK IN PROGRESS
+
+name: cs145project
+channels:
+  - defaults
+dependencies:
+  - tensorflow.keras
+  - matplotlib.pyplot
+prefix: /opt/anaconda3/envs/hw3
