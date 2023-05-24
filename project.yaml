@@ -4,6 +4,7 @@ name: cs145project
 channels:
   - defaults
 dependencies:
-  - tensorflow.keras
-  - matplotlib.pyplot
+  - tensorflow
+  - matplotlib
+  - ipykernel
 prefix: /opt/anaconda3/envs/hw3
