@@ -6,27 +6,23 @@ import torchvision
 import torch.nn as nn
 import torch.nn.functional as F
 
-# construct your CNN model
-# we've provided the basic structure of the class you need to implement
-# replace all the 'None' statements and add in the architecture of your CNN
-# 20 minutes
 class StartingCNN(nn.Module):
 
-    def __init__(self):
-        super(StartingCNN, self).__init__()
-        # input dim: 3x32x32
-        self.c1 = nn.Conv2d(in_channels=3, out_channels=6, kernel_size=5, stride=1, padding=2)
-        # output dim: 6x32x32
+    def __init__(self, channels, pic_size, num_classes):
+        super(CNN, self).__init__()
+        # input dim: channels x pic_size x pic_size = c x p X p
+        self.c1 = nn.Conv2d(in_channels=channels, out_channels=6, kernel_size=5, stride=1, padding=2)
+        # output dim: 2c x p x p
         self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)
-        # output dim: 6x16x16
-        self.c2 = nn.Conv2d(6, 16, 5, 1, 2)
-        # output dim: 16x16x16
+        # output dim: 2c x p/2 x p/2
+        self.c2 = nn.Conv2d(channels*2, 16, 5, 1, 2)
+        # output dim: 16 x p/2 x p/2
         self.pool2 = nn.MaxPool2d(2, 2)
-        # output dim: 16x8x8
+        # output dim: 16 x p/4 x p/4
         self.flat = nn.Flatten()
-        self.d1 = nn.Linear(16*8*8, 120)
+        self.d1 = nn.Linear(16*(pic_size//4)*(pic_size//4), 120)
         self.d2 = nn.Linear(120, 84)
-        self.d3 = nn.Linear(84, 10)
+        self.d3 = nn.Linear(84, num_classes)
         
     def forward(self, x):
         x = self.pool1(F.relu(self.c1(x)))
