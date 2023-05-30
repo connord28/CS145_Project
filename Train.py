@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.tensorboard
+from torchmetrics import F1Score, Precision, Recall
 
 
 def starting_train(
@@ -93,17 +94,30 @@ def compute_accuracy(outputs, labels):
     n_total = len(outputs)
     return n_correct / n_total
 
-def evaluate(val_loader, model, loss_fn, device):
+### Used for evaluating performance on validation or test set
+def evaluate(eval_loader, model, loss_fn, device):
     model.eval()
     correct = 0
     total = 0
     total_loss = 0
-    for i, batch in enumerate(val_loader):
+    full_preds = torch.empty()
+    full_targets = torch.empty()
+    for i, batch in enumerate(eval_loader):
         input_data, labels = batch
+        full_targets = torch.cat(full_targets, labels)
         input_data, labels = input_data.to(device), labels.to(device)
         predictions = model(input_data)
+        full_preds = torch.cat(full_preds, predictions)
         total_loss += loss_fn(predictions, labels).item()
         correct += (predictions.argmax(axis=1) == labels).sum().item()
-        total += len(labels)
+        total += len(labels)    
+    
+    f1 = F1Score(task="multiclass", num_classes=3)
+    f1(full_preds, full_targets)
+    
+    loss = total_loss / total
+    accuracy = correct / total
+
     model.train()
-    return total_loss / total, correct / total
+    
+    return loss, accuracy, f1
