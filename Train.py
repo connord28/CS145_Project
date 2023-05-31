@@ -100,24 +100,24 @@ def evaluate(eval_loader, model, loss_fn, device):
     correct = 0
     total = 0
     total_loss = 0
-    full_preds = torch.empty()
-    full_targets = torch.empty()
+#     full_preds = torch.empty()
+#     full_targets = torch.empty()
     for i, batch in enumerate(eval_loader):
         input_data, labels = batch
-        full_targets = torch.cat(full_targets, labels)
+#         full_targets = torch.cat(full_targets, labels)
         input_data, labels = input_data.to(device), labels.to(device)
-        predictions = model(input_data)
+#         predictions = model(input_data)
         full_preds = torch.cat(full_preds, predictions)
         total_loss += loss_fn(predictions, labels).item()
         correct += (predictions.argmax(axis=1) == labels).sum().item()
         total += len(labels)    
     
-    f1 = F1Score(task="multiclass", num_classes=3)
-    f1(full_preds, full_targets)
+#     f1 = F1Score(task="multiclass", num_classes=3)
+#     f1(full_preds, full_targets)
     
     loss = total_loss / total
     accuracy = correct / total
 
     model.train()
     
-    return loss, accuracy, f1
+    return loss, accuracy
