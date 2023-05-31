@@ -66,13 +66,18 @@ def starting_train(
                 writer.add_scalar("train_accuracy", train_accuracy, global_step = step)
                 writer.add_scalar("train_loss", loss, global_step = step)
 
-                val_loss, val_accuracy = evaluate(val_loader, model, loss_fn, device)
+                val_loss, val_accuracy, val_precision, val_recall, val_f1 = \
+                    evaluate(val_loader, model.output_dim, model, loss_fn, device)
                 writer.add_scalar("val_loss", val_loss, global_step=step)
                 writer.add_scalar("val_accuracy", val_accuracy, global_step=step)
+                # Idk if we should add precision/recall/f1 to writer since I think we are gonna get rid of that
                 
                 print(f"Eval:\t{step/n_eval}")
                 print(f"Validation loss:\t{val_loss}")
                 print(f"Validation Accuracy:\t{val_accuracy}")
+                print(f"Validation Precision:\t{val_precision}")
+                print(f"Validation Recall:\t{val_recall}")
+                print(f"Validation F1-score:\t{val_f1}")
 
             step += 1
 
@@ -95,29 +100,40 @@ def compute_accuracy(outputs, labels):
     return n_correct / n_total
 
 ### Used for evaluating performance on validation or test set
-def evaluate(eval_loader, model, loss_fn, device):
+def evaluate(eval_loader, num_classes, model, loss_fn, device):
     model.eval()
     correct = 0
     total = 0
     total_loss = 0
-#     full_preds = torch.empty()
-#     full_targets = torch.empty()
+    target_list = []
+    pred_list = []
     for i, batch in enumerate(eval_loader):
         input_data, labels = batch
-#         full_targets = torch.cat(full_targets, labels)
+        target_list.append(labels)
         input_data, labels = input_data.to(device), labels.to(device)
-#         predictions = model(input_data)
-        full_preds = torch.cat(full_preds, predictions)
+
+        predictions = model(input_data)
+        pred_list.append(predictions)
+
         total_loss += loss_fn(predictions, labels).item()
         correct += (predictions.argmax(axis=1) == labels).sum().item()
         total += len(labels)    
     
-#     f1 = F1Score(task="multiclass", num_classes=3)
-#     f1(full_preds, full_targets)
+    full_targets = torch.cat(target_list)
+    full_preds = torch.cat(pred_list)
+
+    prec_metric = Precision(task="multiclass", average='macro', num_classes=num_classes)
+    precision = prec_metric(full_preds, full_targets).item()
+
+    recall_metric = Recall(task="multiclass", average='macro', num_classes=num_classes)
+    recall = recall_metric(full_preds, full_targets).item()
+
+    f1_metric = F1Score(task="multiclass", num_classes=num_classes)
+    f1_score = f1_metric(full_preds, full_targets).item()
     
     loss = total_loss / total
     accuracy = correct / total
 
     model.train()
     
-    return loss, accuracy
+    return loss, accuracy, precision, recall, f1_score
