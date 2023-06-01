@@ -7,7 +7,7 @@ from datetime import datetime
 
 
 def starting_train(
-    train_dataset, val_dataset, model, hyperparameters, n_eval, summary_path, device
+    train_dataset, val_dataset, model, hyperparameters, n_eval, loss_fn, device
 ):
     """
     Trains and evaluates a model.
@@ -35,7 +35,7 @@ def starting_train(
 
     # Initalize optimizer (for gradient descent) and loss function
     optimizer = optim.Adam(model.parameters())
-    loss_fn = nn.CrossEntropyLoss()
+    # loss_fn = nn.CrossEntropyLoss()
 
     # Initialize summary writer (for logging)
     # writer = torch.utils.tensorboard.SummaryWriter(summary_path)
