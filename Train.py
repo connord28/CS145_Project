@@ -81,7 +81,10 @@ def starting_train(
         if val_accuracy > best_val_accuracy:
             best_val_accuracy = val_accuracy
             model_name = str(model).split('\n')[0]
-            torch.save(model.state_dict(), f'{model_name}_{datetime.now().strftime("%m-%d-%Y_%H-%M-%S")}).pt')
+            with open(f'{model_name}.txt', 'w') as f:
+                f.write(str(model))
+            f.close()
+            torch.save(model.state_dict(), f'{model_name}.pt')
             
 
         print()
