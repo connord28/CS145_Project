@@ -79,8 +79,10 @@ def starting_train(
         
         # save model if it's better than best model in the training loop
         if val_accuracy > best_val_accuracy:
+            print(f'best model accuracy increased from {best_val_accuracy} to {val_accuracy}')
             best_val_accuracy = val_accuracy
             model_name = str(model).split('\n')[0]
+            print(f'saving {model_name}...')
             with open(f'{model_name}.txt', 'w') as f:
                 f.write(str(model))
             f.close()
