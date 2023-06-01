@@ -5,7 +5,6 @@ import torch.nn.functional as F
 class ResNet34(nn.Module):
     def __init__(self, num_classes):
         super(ResNet34, self).__init__()
-        self.output_dim = num_classes # used for knowing output size in evaluation -- Must have on all models
         self.model = pretrainedmodels.__dict__['resnet34'](pretrained='imagenet')
         
         # change the classification layer

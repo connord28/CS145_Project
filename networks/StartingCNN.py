@@ -10,7 +10,6 @@ class StartingCNN(nn.Module):
 
     def __init__(self, channels, pic_size, num_classes):
         super(StartingCNN, self).__init__()
-        self.output_dim = num_classes # used for knowing output size in evaluation -- Must have on all models
         # input dim: channels x pic_size x pic_size = c x p X p
         self.c1 = nn.Conv2d(in_channels=channels, out_channels=6, kernel_size=5, stride=1, padding=2)
         # output dim: 2c x p x p
