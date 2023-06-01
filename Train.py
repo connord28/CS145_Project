@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import torch.utils.tensorboard
 from torchmetrics import F1Score, Precision, Recall
+from datetime import datetime
 
 
 def starting_train(
@@ -37,10 +38,11 @@ def starting_train(
     loss_fn = nn.CrossEntropyLoss()
 
     # Initialize summary writer (for logging)
-    writer = torch.utils.tensorboard.SummaryWriter(summary_path)
+    # writer = torch.utils.tensorboard.SummaryWriter(summary_path)
     
     model.train()
     step = 0
+    best_val_accuracy = 0
     for epoch in range(epochs):
         print(f"Epoch {epoch + 1} of {epochs}")
 
@@ -48,7 +50,6 @@ def starting_train(
         for i, batch in enumerate(train_loader):
             print(f"\rIteration {i + 1} of {len(train_loader)} ...", end="")
 
-            # TODO: Backpropagation and gradient descent
             input_data, labels = batch
             input_data, labels = input_data.to(device), labels.to(device)
             optimizer.zero_grad()
@@ -63,18 +64,25 @@ def starting_train(
             if step % n_eval == 0:
 
                 train_accuracy = compute_accuracy(predictions.argmax(axis = 1), labels)
-                writer.add_scalar("train_accuracy", train_accuracy, global_step = step)
-                writer.add_scalar("train_loss", loss, global_step = step)
+                # writer.add_scalar("train_accuracy", train_accuracy, global_step = step)
+                # writer.add_scalar("train_loss", loss, global_step = step)
 
                 val_loss, val_accuracy = evaluate(val_loader, model, loss_fn, device)
-                writer.add_scalar("val_loss", val_loss, global_step=step)
-                writer.add_scalar("val_accuracy", val_accuracy, global_step=step)
+                # writer.add_scalar("val_loss", val_loss, global_step=step)
+                # writer.add_scalar("val_accuracy", val_accuracy, global_step=step)
                 
                 print(f"Eval:\t{step/n_eval}")
                 print(f"Validation loss:\t{val_loss}")
                 print(f"Validation Accuracy:\t{val_accuracy}")
-
+            
             step += 1
+        
+        # save model if it's better than best model in the training loop
+        if val_accuracy > best_val_accuracy:
+            best_val_accuracy = val_accuracy
+            model_name = str(model).split('\n')[0]
+            torch.save(model.state_dict(), f'{model_name}_{datetime.now().strftime("%m-%d-%Y_%H-%M-%S")}).pt')
+            
 
         print()
 
