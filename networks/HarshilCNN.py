@@ -29,7 +29,7 @@ class HarshilCNN(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2, padding=1),
             nn.Dropout(p=0.4))
         
-        self.fc1 = nn.Linear(4 * 4 * 128, 625, bias=True)
+        self.fc1 = nn.Linear(107648, 625, bias=True)
         nn.init.xavier_uniform(self.fc1.weight)
         self.layer4 = nn.Sequential(
             self.fc1,
