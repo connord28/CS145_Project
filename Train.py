@@ -143,7 +143,7 @@ def evaluateEnsemble(eval_loader, models, loss_fn, device):
         predictions = models[0](input_data)
         for i in range(1, len(models)):
           predictions += models[i](input_data)
-        predctions /= len(models)
+        predictions /= len(models)
         total_loss += loss_fn(predictions, labels).item()
         correct += (predictions.argmax(axis=1) == labels).sum().item()
         total += len(labels)    
