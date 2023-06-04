@@ -72,6 +72,7 @@ def starting_train(
                 # writer.add_scalar("val_accuracy", val_accuracy, global_step=step)
                 
                 print(f"Eval:\t{step/n_eval}")
+                print(f"Train Accuracy:\t{train_accuracy}")
                 print(f"Validation loss:\t{val_loss}")
                 print(f"Validation Accuracy:\t{val_accuracy}")
             
