@@ -128,3 +128,29 @@ def evaluate(eval_loader, model, loss_fn, device):
     model.train()
     
     return loss, accuracy
+
+### Performs evaluation using an ensemble of models
+def evaluateEnsemble(eval_loader, models, loss_fn, device):
+    for model in models:
+      model.eval()
+    correct = 0
+    total = 0
+    total_loss = 0
+    for i, batch in enumerate(eval_loader):
+        input_data, labels = batch
+        input_data, labels = input_data.to(device), labels.to(device)
+        
+        predictions = models[0](input_data)
+        for i in range(1, len(models)):
+          predictions += models[i](input_data)
+        predctions /= len(models)
+        total_loss += loss_fn(predictions, labels).item()
+        correct += (predictions.argmax(axis=1) == labels).sum().item()
+        total += len(labels)    
+    
+    loss = total_loss / total
+    accuracy = correct / total
+
+    model.train()
+    
+    return loss, accuracy
