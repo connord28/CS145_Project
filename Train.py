@@ -2,7 +2,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.utils.tensorboard
-from torchmetrics import F1Score, Precision, Recall
 from datetime import datetime
 
 
