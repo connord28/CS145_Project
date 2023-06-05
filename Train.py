@@ -62,7 +62,7 @@ def starting_train(
             # Periodically evaluate our model + log to Tensorboard
             if step % n_eval == 0:
 
-                train_accuracy = compute_accuracy(predictions.argmax(axis = 1), labels)
+                train_loss, train_accuracy = evaluate(train_loader, model, loss_fn, device)
                 # writer.add_scalar("train_accuracy", train_accuracy, global_step = step)
                 # writer.add_scalar("train_loss", loss, global_step = step)
 
@@ -71,6 +71,7 @@ def starting_train(
                 # writer.add_scalar("val_accuracy", val_accuracy, global_step=step)
                 
                 print(f"Eval:\t{step/n_eval}")
+                print(f"Train loss:\t{train_loss}")
                 print(f"Train Accuracy:\t{train_accuracy}")
                 print(f"Validation loss:\t{val_loss}")
                 print(f"Validation Accuracy:\t{val_accuracy}")
