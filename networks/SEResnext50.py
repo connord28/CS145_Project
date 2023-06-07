@@ -10,7 +10,7 @@ class SEResnext50(nn.Module):
         
         # change the classification layer
         self.l0= nn.Linear(2048, num_classes)
-        self.dropout = nn.Dropout2d(0.4)
+        self.dropout = nn.Dropout2d(0.5)
         
     def forward(self, x):
         # get the batch size only, ignore(c, h, w)
